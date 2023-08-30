@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>webp</title>
+		<script src="webp.js"></script>
+		<script src="loadImage.js"></script>
+	</head>
+
+	<body>
+		<script>
+			
+			//Assim que todo o HTML é preparado, o codigo Wasm é executado
+			Module.onRuntimeInitialized = async (_) => {
+				//API com as funções C++ que implementei
+				const api = {
+					version: Module.cwrap("getVersion", "number", null),
+					create_buffer: Module.cwrap("create_buffer", "number", [
+						"number",
+						"number",
+					]),
+
+					free_buffer: Module.cwrap("free_buffer", null, ["number"]),
+					encode: Module.cwrap("encode", null, [
+						"number",
+						"number",
+						"number",
+						"number",
+					]),
+					free_output_buffer: Module.cwrap(
+						"free_output_buffer",
+						null,
+						["number"]
+					),
+					get_output_buffer_pointer: Module.cwrap(
+						"get_output_buffer_pointer",
+						"number",
+						null
+					),
+					get_output_buffer_size: Module.cwrap(
+						"get_output_buffer_size",
+						"number",
+						null
+					),
+				};
+
+				//Imprime a versão do libwebp no console
+				let verHex = api.version().toString(16);
+				console.log(verHex);
+
+				//Le a imagem crua
+				const image = await loadImage("image.jpg");
+				const pointer = api.create_buffer(image.width, image.height); //Aloca a imagem no bufeer
+				Module.HEAP8.set(image.data, pointer); //Preenche o buffer do Wasm com a imagem
+
+				api.encode(pointer, image.width, image.height, 100); //Converto a imagem crua em webp
+				const resultPointer = api.get_output_buffer_pointer(); //Pega o endereço da imagem convertida
+				const resultSize = api.get_output_buffer_size(); //Pega o tamanho da imagem convertida
+				const resultView = new Uint8Array(
+					Module.HEAP8.buffer,
+					resultPointer,
+					resultSize
+				); //Cria um Uint8Array com a imagem 
+				const result = new Uint8Array(resultView);
+				
+				// Libera os buffers
+				api.free_output_buffer(resultPointer);
+				api.free_buffer(pointer); 
+
+				//Mostra a imagem na tela
+				const blob = new Blob([result], { type: "image/webp" });
+				const blobURL = URL.createObjectURL(blob);
+				const img = document.createElement("img");
+				img.src = blobURL;
+				document.body.appendChild(img);
+			};
+		</script>
+	</body>
+</html>

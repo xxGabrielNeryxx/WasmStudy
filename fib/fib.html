@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>fib</title>
+    <script src="fib.js"></script>
+  </head>
+
+  <body>
+    <script>
+        function calc_fib(){
+            let a = document.querySelector("#a").value;
+            const fib = Module.cwrap("fib", "number", ["number"]);
+            console.log(fib(a));
+        };
+      
+    </script>
+    <input type="number" id="a" />
+    <button onclick="calc_fib()">Fib</button>
+
+  </body>
+</html>

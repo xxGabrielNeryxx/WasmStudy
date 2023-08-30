@@ -1,0 +1,1 @@
+emcc webp.cpp -o webp.js -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=cwrap -I libwebp libwebp/sharpyuv/*.c libwebp/src/{dec,dsp,demux,enc,mux,utils}/*.c 
