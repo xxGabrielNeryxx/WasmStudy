@@ -1,0 +1,8 @@
+autoscan
+autoconf
+aclocal 
+autoheader  
+autoconf
+automake
+./configure
+make

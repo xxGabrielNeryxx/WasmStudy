@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Streaming</title>
+        <script src="streaming.js"></script>
+    </head>
+
+    <body>
+        <script>
+            WebAssembly.instantiateStreaming(fetch("wrapping.wasm"), {}).then(
+                (results) => {
+                    var a = document.querySelector("#a").value;
+                    var sum = results.instance.exports.sumOfNInts(a);  
+                }
+            );
+        </script>
+
+        <input type="number" id="a" />
+        <button onclick="sumNums()"><button></button></button>
+    </body>
+</html>

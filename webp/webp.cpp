@@ -32,7 +32,7 @@ EXTERN EMSCRIPTEN_KEEPALIVE uint8_t *create_buffer(int width, int height) {
  * @param p 
  * @return void 
  */
-EXTERN  EMSCRIPTEN_KEEPALIVE void free_buffer(uint8_t *p) { free(p); }
+EXTERN EMSCRIPTEN_KEEPALIVE void (uint8_t *p) { freefree_buffer(p); }
 
 int output_buffer;
 int lenght_output_buffer;
